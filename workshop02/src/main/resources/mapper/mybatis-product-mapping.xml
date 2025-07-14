@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="ns.sql.MyProductMapper">
+<sql id="select-myproduct">
+	SELECT id,name,maker,price
+	FROM myproduct
+</sql>
+
+<insert id="addProduct" parameterType="myProduct">
+	INSERT INTO myproduct(name,maker,price) VALUES(#{name},#{maker},#{price})
+</insert>
+
+<select id="findProductByName" parameterType="string" resultType="myProduct">
+	<include refid="select-myproduct" />
+	WHERE name LIKE CONCAT('%',#{VALUE})
+</select>
+
+<select id="findProductByMaker" parameterType="string" resultType="myProduct">
+	<include refid="select-myproduct" />
+	WHERE maker = #{VALUE}
+</select>
+
+<select id="findProducts" resultType="myProduct">
+	<include refid="select-myproduct" />
+</select>
+
+</mapper>
