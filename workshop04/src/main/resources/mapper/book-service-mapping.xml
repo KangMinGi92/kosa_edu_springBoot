@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ns.sql.BookMapper">
+	<sql id="select-book">
+		SELECT isbn,title,catalogue,nation,publish_date,publisher,author,price,currency,description
+		FROM book
+	</sql>
+
+	<insert id="insertBook">
+		INSERT INTO book(isbn,title,catalogue,nation,publish_date,publisher,author,price,currency,description)
+		VALUES(#{isbn},#{title},#{catalogue},#{nation},#{publishDate},#{publisher},#{author},#{price},#{currency},#{description})
+	</insert>
+	
+	<select id="getBooks" resultType="book">
+		<include refid="select-book" />
+	</select>
+	
+	<select id="searchByTitle" parameterType="string" resultType="book">
+		<include refid="select-book" />
+		WHERE title LIKE CONCAT('%',#{VALUE},'%')
+	</select>
+	
+	<select id="searchByPublisher" parameterType="string" resultType="book">
+		<include refid="select-book" />
+		WHERE publisher LIKE CONCAT('%',#{VALUE},'%')
+	</select>
+	
+<!-- 	특정 가격 이상인 책만 검색
+	<select id="searchByPrice" parameterType="int" resultType="book">  
+		<include refid="select-book" />
+		WHERE price &gt;= #{VALUE}     
+    </select> -->
+    
+    <!-- CDATA문법 -->
+	<select id="searchByPrice" parameterType="int" resultType="book">  
+		<include refid="select-book" />
+		<![CDATA[WHERE price >= #{VALUE}]]>     
+    </select>
+	
+	<!-- isnb으로 한권의 책을 검색  -->
+	<select id="searchByIsbn" parameterType="string" resultType="book">
+		<include refid="select-book" />
+		WHERE isbn = #{VALUE}
+	</select>
+	
+	<delete id="delete" parameterType="string">
+		DELETE FROM book WHERE isbn=#{VALUE}
+	</delete>
+	
+	<select id="getIsbn" parameterType="string" resultType="book">	
+		<include refid="select-book" />
+		WHERE isbn = #{VALUE}
+	</select>
+	
+	<!--  특정 isbn에 해당하는 Book의 title,author, description 정보 수정하기 -->
+	<update id="update" parameterType="book">
+		UPDATE book SET title=#{title}, author=#{author}, description=#{description} WHERE isbn=#{isbn}	
+	</update>
+</mapper>
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

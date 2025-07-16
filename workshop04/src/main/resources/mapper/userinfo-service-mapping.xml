@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="ns.sql.UserMapper">
+	<!-- 동적쿼리  
+		1) login(id, password)
+			+
+		2) getAUser(password null이면 유저만 찾아오는)
+	--> 
+	<select id="login" parameterType="user" resultType="user">	
+		SELECT userId, password, name, email
+		FROM userInfo
+		WHERE userId = #{userId}
+			<if test="password !=null">
+				AND password = #{password}
+			</if>
+	</select>
+	
+	<insert id="addUser" parameterType="user">		
+		INSERT INTO userInfo(userId,password,name,email) VALUES(#{userId},#{password},#{name},#{email})
+	</insert>
+</mapper>
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
