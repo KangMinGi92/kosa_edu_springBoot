@@ -89,7 +89,9 @@ $(function(){
 			<h4>등록된 도서 목록이 없습니다.</h4>
 		</c:when>
 		<c:otherwise>
+			<c:if test="${not empty search }">
 			<b><font color=crimson>${search }로 검색한 ${text}관련 서적입니다.</font></b>
+			</c:if>
 			<br><br>
 			<table id="bookTable">
 				<tr>

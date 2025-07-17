@@ -4,7 +4,7 @@
 	
 <mapper namespace="ns.sql.MemberMapper">
 	<!-- 동적쿼리 :: 회원검색 + 로그인 -->
-	<select id="selectMember" parameterType="member" resultType="member">
+	<select id="selectUser" parameterType="member" resultType="member">
 		SELECT id,password,name,address
 		FROM member
 		WHERE id=#{id}

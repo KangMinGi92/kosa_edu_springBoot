@@ -4,6 +4,70 @@
 
 <mapper namespace="ns.sql.BoardMapper">
 
+<!--전체 게시물보기 결과맵  -->
+<resultMap type="board" id="boardListRM">
+	<id property="no" column="no"/>
+	<result property="title" column="title"/>
+	<result property="writeDate" column="w_date"/>
+	<result property="count" column="count"/>
+	<!--
+		property의 member는 setMember()이고, 
+		javaType의 member는 TypeAlias에 의한 com.service.spring.domain.Member이다.!!   -->
+	<association property="member" javaType="member"> 
+		<id property="id" column="id"/>
+		<result property="password" column="password"/>
+		<result property="name" column="name"/>
+		<result property="address" column="address"/>
+	</association>
+</resultMap>
+
+<!--상세 게시물보기 결과맵  -->
+<resultMap type="board" id="boardRM" extends="boardListRM">
+	<result property="content" column="content"/>
+	<result property="member.id" column="id"/><!--boardListRM이 association으로 이미 상속받아서 불필요 그리고 member.id는 틀린문법-->
+</resultMap>
+
+<!-- 게시글작성-->
+<!--  -->
+<insert id="write" parameterType="board" useGeneratedKeys="true" keyProperty="no" >
+	INSERT INTO springboard(title,content,w_date,id) VALUES(#{title},#{content},curdate(),#{member.id})
+</insert>
+<!--특정 게시글일 입력될때 curdate() 날짜를 DB에서 받아오는 기능 -->
+<select id="selectByNoForDate" parameterType="int" resultType="string">
+	SELECT w_date
+	FROM springboard
+	WHERE no=#{VALUE}
+</select>
+
+<!-- 전체 게시글 보기 -->
+<select id="getBoardList" resultMap="boardListRM">
+	SELECT b.no, b.title, b.count, b.w_date, m.name
+	FROM springboard b, member m
+	WHERE b.id = m.id
+	ORDER BY no DESC
+</select>
+
+<!-- 특정 게시글 보기 :: 상세글보기-->
+<select id="showContent" parameterType="int" resultMap="boardRM">
+	SELECT b.no, b.title, b.count, b.w_date, b.content, m.name, m.id
+	FROM springboard b, member m
+	WHERE b.id = m.id
+	AND b.no=#{VALUE}
+	ORDER BY no DESC
+</select>
+
+<!-- 게시글 삭제하기 -->
+<delete id="deleteBoard" parameterType="int">
+	DELETE FROM springboard WHERE no=#{VALUE}
+</delete>
+<!-- 게시글 수정하기 -->
+<update id="updateBoard" parameterType="board">
+	UPDATE springboard SET title=#{title}, content=#{content}, w_date=curdate() WHERE no=#{no}
+</update>
+<!-- 게시글 조회수 증가시키기 -->
+<update id="updateCount" parameterType="int">
+	UPDATE springboard SET count=count+1 WHERE no=#{VALUE}
+</update>
 </mapper>
 
  
