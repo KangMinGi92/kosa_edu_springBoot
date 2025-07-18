@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ns.sql.PhoneMapper">
+
+<resultMap type="phone" id="phoneWithCompanyRM">
+	<id property="num" column="num" />
+	<result property="model" column="model"/>
+	<result property="price" column="price"/>
+	<result property="vcode" column="vcode"/>
+	
+	<association property="company" javaType="company">
+		<id property="vcode" column="vcode"/>
+		<result property="vendor" column="vendor"/>
+	</association>
+</resultMap>
+	<!-- 동적쿼리 :: 모든 폰 조회하기 + 특정 폰 조회하기 :: selectList & selectOne -->
+	<select id="select" parameterType="phone" resultMap="phoneWithCompanyRM">
+		SELECT p.num, p.model, p.price, c.vcode, c.vendor
+		FROM phones p
+		JOIN company c ON p.vcode = c.vcode
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="num != null">
+			 	p.num = #{num}
+			</if>
+			<if test="model != null">
+			 AND p.model = #{model}
+			</if>
+			<if test="price != null">
+			 AND p.price <![CDATA[>]]>= #{price}
+			</if>
+			<if test="company != null">
+			 AND c.vendor = #{company.vendor}
+			</if>
+		</trim>
+	</select>
+	
+	<!-- 동적쿼리 :: 로그인 + 특정 고객 조회하기 :: selectList & selectOne -->
+	<select id="selectUser" parameterType="userInfo" resultType="userInfo">
+		SELECT id
+		FROM userInfo
+		<where>
+			id = #{id}
+			<if test="pw != null">
+				AND pw = #{pw}
+			</if>
+		</where>
+	</select>
+	<insert id="insert" parameterType="phone">
+		INSERT INTO phones(num, model, price, vcode) VALUES(#{num}, #{model}, #{price}, #{vcode})
+	</insert>
+	
+	<!-- 동적쿼리 : foreach -->
+	<delete id="delete" parameterType="list">
+		DELETE FROM phones
+		WHERE num IN
+		<foreach collection="list" item="num" open="(" separator="," close=")">
+			 #{num}
+		</foreach>
+	</delete>
+	
+	<update id="update" parameterType="phone">
+		UPDATE phones
+		SET model=#{model}, price=#{price}, vcode=#{vcode}
+		WHERE num=#{num}
+	</update>
+	
+</mapper>
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
